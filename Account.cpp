@@ -61,7 +61,7 @@ Account::Account(sql::ResultSet* data)
 	end_date = data->getString("end_date");
 }
 
-//vector<Account> Account::findAccount(string userid) {
+
 vector<Account> Account::findAccount(string userid, string keyword, string sortColumn, bool ascending) {
 
 	
@@ -106,45 +106,8 @@ vector<Account> Account::findAccount(string userid, string keyword, string sortC
 	db.~DBConnection();
 	return accounts;
 }
+
 /*
-//---------------------------------------------------------------------------------------//
-vector<Doctors> Doctors::getdlist(string keyword, string sortColumn, bool ascending) {
-
-	string query = "SELECT * FROM Doctors WHERE "	" (DName LIKE ? OR Specialization LIKE ?) "  " ORDER BY " + sortColumn;
-
-	if (ascending) {
-		query += " ASC";
-	}
-	else {
-		query += " DESC";
-	}
-	// 
-	DatabaseConnector db;
-	db.prepareStatement(query);
-	db.stmt->setString(1, "%" + keyword + "%");
-	db.stmt->setString(2, "%" + keyword + "%");
-
-	vector<Doctors> Doctorsl;
-
-	db.QueryResult();
-
-	if (db.res->rowsCount() > 0) {
-
-		while (db.res->next()) {
-			Doctors tempDoctors(db.res);
-			Doctorsl.push_back(tempDoctors);
-		}
-	}
-	else {
-		cout << "Empty!";
-		_getch();
-	}
-
-	db.~DatabaseConnector();
-	return?Doctorsl;
-}
-
-//------------------------------------------------------------------------------//
 Account Account::ownAccount(int AccountID) {
 	DBConnection db;
 	db.prepareStatement("SELECT * FROM account WHERE AccountID=?");
