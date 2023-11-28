@@ -194,6 +194,7 @@ void UserPage(User user)
 			break;
 		case 2:
 			AccountPage(account,user);
+			break;
 		case 3:
 		case 4:
 		case 5:
@@ -361,7 +362,6 @@ void AccountPage(Account account,User user)
 			case 3:
 				sortColumn = "Budget amount";
 				break;
-
 			}
 			break;
 			
@@ -381,113 +381,6 @@ void AccountPage(Account account,User user)
 		}
 	}
 }
-/*
-void doctorlist(Accounts adl, Patients pdl) {
-	vector<Doctors> Doctors;
-	string displayString = "", keyWord = "", sortColumn = "DoctorID";
-	int DepartmentID = -1;  //?
-
-	bool ascending = true;
-
-	//Show the list at first encounter
-	Doctors = Doctors::getdlist(keyWord, sortColumn, ascending);
-
-	//Doctor List Menu
-	Menu DLM;
-	DLM.header = "Search Option";
-	DLM.addOption("->> Keyword");
-	DLM.addOption("->> Sort By");
-	DLM.addOption("->> Ordering");
-	DLM.addOption("->> Search/Refresh");
-	DLM.addOption("->> Select");
-	DLM.addOption("->> Back");
-
-	//DoctorSortingSubMenu
-	Menu DSSM;
-	DSSM.header = "Choose the column that will be used to sort the list: \n";
-	DSSM.addOption("->> Name");
-	DSSM.addOption("->> Specialization");
-	DSSM.addOption("->> DepartmentID");
-	DSSM.addOption("->> DoctorID");
-
-	while (1)
-	{
-		//Timer::getInstance().startTimer(60, std::bind(patientnotificationchecker, adl, pdl));
-		//Timer::getInstance().startTimer(60, [adl, pdl]() { patientnotificationchecker(adl, pdl); });
-		//patientnotificationchecker(adl, pdl);
-		DLM.setValue(1, sortColumn);
-		if (ascending) {
-			DLM.setValue(2, "Ascending");
-		}
-		else {
-			DLM.setValue(2, "Descending");
-		}
-
-		if (displayString == "") {
-			displayString = "\nSearch Result: \n\n";
-			stringstream tmpString;
-			tmpString << fixed << setprecision(2) << setw(5) << "DoctorID" << "|" << setw(10) << "Name"
-				<< "|" << setw(15) << "TelephoneNo" << "|" << setw(20) << "Specialization" << "|" << setw(20) << "DepartmentID" << "|" << endl;
-
-			for (int i = 0; i < Doctors.size(); i++) {
-				tmpString << setw(8) << Doctors[i].DoctorID << "|" << setw(10) << Doctors[i].DName
-					<< "|" << setw(15) << Doctors[i].DTelephoneNo << "|" << setw(20) << Doctors[i].Specialization << "|" << setw(20)
-					<< Doctors[i].DepartmentID << "|" << endl;
-			}
-			displayString += tmpString.str();
-		}
-		DLM.footer = displayString;
-
-		switch (DLM.prompt()) {
-
-			/// the case will modify the variable used as parameter to call the search method
-		case 1:
-			cout << "Please enter the keyword: ";
-			getline(cin, keyWord);
-			DLM.setValue(0, keyWord);
-			break;
-
-		case 2:
-			switch (DSSM.prompt())
-			{
-			case 1:
-				sortColumn = "DName";
-				break;
-			case 2:
-				sortColumn = "Specialization";
-				break;
-			case 3:
-				sortColumn = "DepartmentID";
-				break;
-			case 4:
-				sortColumn = "DoctorID";
-				break;
-			}
-			break;
-
-		case 3:
-			ascending = !ascending;
-			break;
-
-		case 4:
-			Doctors = Doctors::getdlist(keyWord, sortColumn, ascending);
-			displayString = "";
-			break;
-
-		case 5:
-			cout << "Please enter the DoctorID you would like to schedule an appointment/ make a feedback with: ";
-			cin >> doctorselected;
-			return;
-			break;
-
-		case 6:
-			return;
-			break;
-		default:
-			break;
-		}
-	};
-}*/
 
 //convert amount to 2 decimal places
 string formatAmount(double amount) {
