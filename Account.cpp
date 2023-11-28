@@ -65,9 +65,8 @@ Account::Account(sql::ResultSet* data)
 vector<Account> Account::findAccount(string userid, string keyword, string sortColumn, bool ascending) {
 
 	
-	string query = "SELECT account_name,budget_amount,balance,start_date,end_date FROM `account` WHERE "
-		" (account_name LIKE ?) AND UserID=?"
-		" ORDER BY "+sortColumn;
+	string query = "SELECT account_name,budget_amount,balance,start_date,end_date FROM `account` WHERE UserID=?"
+	" ORDER BY "+sortColumn;
 	
 
 	if (ascending) {
@@ -80,17 +79,8 @@ vector<Account> Account::findAccount(string userid, string keyword, string sortC
 	
 	DBConnection db;
 	db.prepareStatement(query);
-	db.stmt->setString(1, "%" + keyword + "%");
-	db.stmt->setString(2, userid);
-	
+	db.stmt->setString(1,userid);
 
-	/*
-	string query = "SELECT account_name,budget_amount,balance,start_date,end_date FROM `account` WHERE  UserID = ? ";
-		
-	DBConnection db;
-	db.prepareStatement(query);
-	db.stmt->setString(1, userid);
-	*/
 	vector<Account> accounts;
 
 	db.QueryResult();
@@ -107,24 +97,6 @@ vector<Account> Account::findAccount(string userid, string keyword, string sortC
 	return accounts;
 }
 
-/*
-Account Account::ownAccount(int AccountID) {
-	DBConnection db;
-	db.prepareStatement("SELECT * FROM account WHERE AccountID=?");
-	db.stmt->setInt(1,AccountID);
-	db.QueryResult();
-
-	Account result;
-	if (db.res->rowsCount() == 1) {
-		while (db.res->next()) {
-			Account found(db.res);
-			result = found;
-		}
-	}
-	db.~DBConnection();
-	return result;
-}
-*/
 
 
 Account::~Account() {}
