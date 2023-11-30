@@ -530,9 +530,9 @@ void modifyAccountPage(Account account, User user)
 	Menu mdfAccPage;
 	mdfAccPage.header = "Your account / wallet";
 	mdfAccPage.addOption("Search account / wallet");
-	mdfAccPage.addOption("User Identity: ");
 	mdfAccPage.addOption("Account name: ");
 	mdfAccPage.addOption("Confirm");
+	mdfAccPage.addOption("Back");
 
 	while (1)
 	{
@@ -555,15 +555,11 @@ void modifyAccountPage(Account account, User user)
 			disPlayAcc = "";
 			break;
 		case 2:
-			cout << "UserID";
-			userid = user.UserId;
-			mdfAccPage.setValue(1, userid);
-		case 3:
 			cout << "Enter the account name to edit: ";
 			cin >> account.account_name;
-			mdfAccPage.setValue(2, account.account_name);
+			mdfAccPage.setValue(1, account.account_name);
 			break;
-		case 4:
+		case 3:
 			if (account.confirmtoEdit()) {
 				modifyAccount(account);
 			}
@@ -571,6 +567,9 @@ void modifyAccountPage(Account account, User user)
 				cout << RED << "\tInvalid account !" << CYAN << " Please press enter to continues..." << RESET;
 				_getch();
 			}
+			break;
+		case 4:
+			return;
 			break;
 		default:
 			break;
@@ -585,15 +584,15 @@ Account modifyAccount(Account account)
 
 	Menu modifyAccMenu;
 	modifyAccMenu.header = "Edit information of account / wallet";
-	modifyAccMenu.addOption("Account name");
-	modifyAccMenu.addOption("Balance");
-	modifyAccMenu.addOption("Budget amount");
-	modifyAccMenu.addOption("Start date");
-	modifyAccMenu.addOption("End date");
-	modifyAccMenu.addOption("Reset");
-	modifyAccMenu.addOption("Save");
-	modifyAccMenu.addOption("Back");
-	modifyAccMenu.addOption("Delete Account");
+	modifyAccMenu.addOption("Account name");//1
+	modifyAccMenu.addOption("Balance");//2
+	modifyAccMenu.addOption("Budget amount");//3
+	modifyAccMenu.addOption("Start date");//4
+	modifyAccMenu.addOption("End date");//5
+	modifyAccMenu.addOption("Reset");//6
+	modifyAccMenu.addOption("Save");//7
+	modifyAccMenu.addOption("Back");//8
+	modifyAccMenu.addOption("Delete Account");//9
 
 	string month;
 	string formattedBudget;
@@ -604,7 +603,7 @@ Account modifyAccount(Account account)
 	localtime_s(&now, &current); //populate the now object with data from current
 
 	while(1)
-	{
+	{//check here,still have something wrong!
 		modifyAccMenu.setValue(0, temp.account_name);
 		modifyAccMenu.setValue(1, formattedBalance);
 		modifyAccMenu.setValue(2, formattedBudget);
@@ -670,20 +669,20 @@ Account modifyAccount(Account account)
 		case 5:
 			break;
 		case 6:
-			break;
-		case 7:
 			temp = account;
 			break;
-		case 8:
+		case 7:
 			account = temp;
+			
 			account.update();
-			cout << CYAN<<"Updated"<<RESET;
+			cout << CYAN << "Updated" << RESET;
 			_getch();
-		case 9:
+			break;
+		case 8:
 			return account;
 			break;
-		case 10:
-			cout <<RED<< "Delete your account? [Y/N]"<<RESET;
+		case 9:
+			cout << RED << "Delete your account? [Y/N]" << RESET;
 			char confirm;
 			confirm = _getch();
 			if (confirm == 'Y' || confirm == 'y') {
