@@ -17,7 +17,7 @@ void Account::addAccount() {
 	DBConnection db;
 	
 	db.prepareStatement("Insert into account (UserID,account_name,budget_amount,balance,start_date,end_date) VALUES (?,?,?,?,?,?)");
-	db.stmt->setString(1, UserID);//if your insert 
+	db.stmt->setString(1, UserID);
 	db.stmt->setString(2, account_name);
 	db.stmt->setDouble(3, budget_amount);
 	db.stmt->setDouble(4, balance);
@@ -97,6 +97,55 @@ vector<Account> Account::findAccount(string userid, string keyword, string sortC
 	return accounts;
 }
 
+vector<Account> Account::selectAccount(string userid) {
+	string query = "SELECT account_name FROM `account` WHERE UserID=? ";
 
+	DBConnection db;
+	db.prepareStatement(query);
+	db.stmt->setString(1, userid);
+
+	vector<Account> Acc;
+
+	db.QueryResult();
+
+	if (db.res->rowsCount() > 0) {
+
+		while (db.res->next()) {
+			Account tmpProduct(db.res);
+			Acc.push_back(tmpProduct);
+		}
+	}
+
+	db.~DBConnection();
+	return Acc;
+}
+
+
+bool Account::confirmtoEdit() {
+
+	DBConnection db;
+	db.prepareStatement("SELECT account_name,budget_amount,balance,start_date,end_date FROM account WHERE UserID=? AND account_name=? ");
+	db.stmt->setString(1, UserID);
+	db.stmt->setString(2, account_name);
+	db.QueryResult();
+	if (db.res->rowsCount() == 1)
+	{
+		while (db.res->next()) {
+			UserID = db.res->getString("UserID");
+			account_name = db.res->getString("account_name");
+			balance = db.res->getDouble("balance");
+			budget_amount = db.res->getDouble("budget_amount");
+			start_date = db.res->getString("start_date");
+			end_date = db.res->getString("end_date");
+		}
+		db.~DBConnection();
+		return true;
+	}
+	else {
+
+		db.~DBConnection();
+		return false;
+	}
+}
 
 Account::~Account() {}
