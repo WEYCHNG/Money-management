@@ -18,7 +18,8 @@ public:
 	Account(sql::ResultSet* data);
 
 	static vector<Account> findAccount(string userid, string keyword, string sortColumn,bool ascending);
-	//static vector<Account> findAccount(string userid);
+	static vector<Account> selectAccount(string userid);
+	bool confirmtoEdit();
 	void addAccount();
 	void update();
 	void removeAccount();
