@@ -37,7 +37,7 @@ void Account::update() {
 	db.stmt->setDouble(3, balance);
 	db.stmt->setString(4, start_date);
 	db.stmt->setString(5, end_date);
-	db.stmt->setString(5, UserID);
+	db.stmt->setString(6, UserID);
 	db.QueryStatement();
 	db.~DBConnection();
 
