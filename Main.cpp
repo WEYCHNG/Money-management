@@ -7,8 +7,16 @@
 #include <iomanip>//setw()
 #include <ctime>//get time
 #include <sstream>//set precision
-
 #include <iostream>
+
+//colour
+#define RESET   "\033[0m"     // Reset to default color
+#define RED     "\033[31m"    // Red color
+#define GREEN   "\033[32m"    // Green color
+#define YELLOW  "\033[33m"    // Yellow color
+#define BLUE    "\033[34m"    // DeepBlue color
+#define CYAN    "\033[36m"    // Cyan color
+#define WHITE   "\033[37m"    // White color
 using namespace std;
 
 //getline(cin, keyWord);
@@ -21,7 +29,7 @@ string formatAmount(double amount);//to correct into 2 d.p.
 
 void AccountPage(Account account, User user);
 void newAccount(User user);//Add account
-void modifyAccountPage(Account account, User user);
+void modifyAccountPage(Account account, User user);//select accout to modify
 Account modifyAccount(Account account); //modify account
 
 int main()
@@ -72,22 +80,22 @@ void registerAccount() {
 
 		switch (cnMenu.prompt()) {
 		case 1:
-			cout << "Insert UserId:";
+			cout << "Insert UserId: ";
 			cin >> newacc.UserId;
 			cnMenu.setValue(0, newacc.UserId);
 			break;
 		case 2:
-			cout << "Insert First Name:";
+			cout << "Insert First Name: ";
 			cin >> newacc.first_name;
 			cnMenu.setValue(1, newacc.first_name);
 			break;
 		case 3:
-			cout << "Insert Last Name:";
+			cout << "Insert Last Name: ";
 			cin >> newacc.last_name;
 			cnMenu.setValue(2, newacc.last_name);
 			break;
 		case 4:
-			cout << "Insert password:";
+			cout << "Insert password: ";
 			cin >> tmpinput;
 			if (tmpinput.length() < 6) {
 				cout << "Password must be at least 6 character long";
@@ -99,16 +107,16 @@ void registerAccount() {
 			}
 			break;
 		case 5:
-			cout << "Insert email:";
+			cout << "Insert email: ";
 			cin >> newacc.email;
 			cnMenu.setValue(4, newacc.email);
 			break;
 		case 6:
-			cout << "Insert Phone Number:";
+			cout << "Insert Phone Number: ";
 			cin >> tmpinput;
 			if (tmpinput.length() < 9)
 			{
-				cout << "Invalid ! ";
+				cout << RED <<"Invalid ! "<<RESET;
 				_getch();
 			}
 			else
@@ -119,7 +127,7 @@ void registerAccount() {
 			break;
 		case 7:
 			newacc.insert();
-			cout << "Register sucessfull !\n\n";
+			cout <<YELLOW<< "Register sucessfull !\n\n"<<RESET;
 			return;
 		case 8:
 			return;
@@ -147,12 +155,12 @@ void loginMenu()
 		switch (loginMenu.prompt())
 		{
 		case 1:
-			cout << "Insert UserId:";
+			cout << "Insert UserId: ";
 			cin >> user.UserId;
 			loginMenu.setValue(0, user.UserId);
 			break;
 		case 2:
-			cout << "Insert Password:";
+			cout << "Insert Password: ";
 			cin >> user.password;
 			loginMenu.setValue(1, user.password);
 			break;
@@ -161,7 +169,7 @@ void loginMenu()
 				UserPage(user);
 			}
 			else {
-				cout << "Invalid Login";
+				cout << RED <<"\tInvalid Login !"<< CYAN <<" Please press enter to continues..."<<RESET;
 				_getch();
 			}
 			break;
@@ -196,10 +204,10 @@ void UserPage(User user)
 			AccountPage(account,user);
 			break;
 		case 3:
+			//Transaction
 		case 4:
+			//Analysis
 		case 5:
-
-
 			return;
 			break;
 		default:
@@ -235,19 +243,19 @@ User profile(User user) {
 		switch (profileMenu.prompt())
 		{
 		case 1:
-			cout << "Insert First Name:";
+			cout << "Enter First Name:";
 			cin >> temp.first_name;
 			break;
 		case 2:
-			cout << "Insert Last Name:";
+			cout << "Enter Last Name:";
 			cin >> temp.last_name;
 			break;
 		case 3:
-			cout << "Insert password:";
+			cout << "Enter new password:";
 			cin >> temp.password;
 			break;
 		case 4:
-			cout << "Insert Phone Number:";
+			cout << "Enter new phone number:";
 			cin >> tmpInput;
 			if (tmpInput.length() < 9)
 			{
@@ -271,7 +279,7 @@ User profile(User user) {
 			return user;
 			break;
 		case 8:
-			cout << "Delete your account? [Y/N]";
+			cout <<RED<< "Delete your account? [Y/N]"<<RESET;
 			char confirm;
 			confirm = _getch();
 			if (confirm == 'Y' || confirm == 'y') {
@@ -291,32 +299,27 @@ void AccountPage(Account account,User user)
 {
 	vector<Account> accounts;
 	string displayString = "";
-	string keyWord = "";
-	string sortColumn = "Account name";
+	string sortColumn = "account_name";
 	string userid="";
 	bool ascending = true;
 
 	Menu homeAccount;
 	homeAccount.header = "Search Option";
-	homeAccount.addOption("Keyword for search account name");
-	homeAccount.addOption("Order By");
-	homeAccount.addOption("Odering");
-	homeAccount.addOption("Search Account / Wallet");
+	homeAccount.addOption("Search or refresh Account / Wallet");
+	homeAccount.addOption("Order By ");
+	homeAccount.addOption("Odering ");
 	homeAccount.addOption("Add account");
-	homeAccount.addOption("Edit");
+	homeAccount.addOption("Edit account");
 	homeAccount.addOption("Back to User Page");
 
-	
 	Menu sortingSubMenu;
 	sortingSubMenu.header = "Select Sort category";
 	sortingSubMenu.addOption("Account name");
 	sortingSubMenu.addOption("Balance");
 	sortingSubMenu.addOption("Budget Amount");
 	
-
 	while (1)
 	{
-		
 		homeAccount.setValue(1, sortColumn);
 		if (ascending) {
 			homeAccount.setValue(2, "Ascending");
@@ -325,59 +328,56 @@ void AccountPage(Account account,User user)
 			homeAccount.setValue(2, "Descending");
 		}
 		
-
+		
 		if (displayString == "") {
-			displayString = "\nSearch Result:\n";
+			displayString = BLUE"\nSearch Result:\n" RESET;
 			stringstream tmpString;
-			tmpString << fixed << setprecision(2) << setw(5) <<"UserID"<< "Account Name" << "|" << setw(20) << "Budget amount"
-				<< "|" << setw(10) << "Balance" << "|" << setw(20) << "Start date" << "|" << setw(20) << "End date" <<  "|"<< endl;
+			tmpString << fixed << setprecision(2) << setw(5)  << "Account Name" << "|" << setw(20) << "Balance"
+				<< "|" << setw(20) << "Budget amount" << "|" << setw(20) << "Start date" << "|" << setw(20) << "End date" <<  "|"<< endl;
 
 			for (int i = 0; i < accounts.size(); i++) {
-				tmpString << setw(5) <<accounts[i].UserID<< accounts[i].account_name << "|" << setw(20) << accounts[i].budget_amount
-					<< "|" << setw(10) << accounts[i].balance << "|" << setw(20) << accounts[i].start_date 
-					<< "|" << setw(20) << accounts[i].end_date<<"|" << endl;
+				tmpString << setw(10) << accounts[i].account_name << "|" << setw(25) << accounts[i].balance
+					<< "|" << setw(10) << accounts[i].budget_amount << "|" << setw(25) << accounts[i].start_date 
+					<< "|" << setw(25) << accounts[i].end_date<<"|" << endl;
 			}
 			displayString += tmpString.str();
 		}
 
 		homeAccount.header = "Accounts";
+		homeAccount.footer = displayString;
 		switch (homeAccount.prompt())
 		{
 		case 1:
-			cout << "Please enter the keyword: ";
-			getline(cin, keyWord);
-			homeAccount.setValue(0, keyWord);
+			userid = user.UserId;
+			accounts = Account::findAccount(userid, sortColumn, ascending);
+			displayString = "";
 			break;
-			
 		case 2:
-			
 			switch (sortingSubMenu.prompt())
 			{
 			case 1:
-				sortColumn = "Account name";
+				sortColumn = "account_name";
 				break;
 			case 2:
-				sortColumn = "Balance";
+				sortColumn = "balance";
 				break;
 			case 3:
-				sortColumn = "Budget amount";
+				sortColumn = "budget_amount";
 				break;
+
 			}
 			break;
-			
 		case 3:
 			ascending = !ascending;
+			break;
 		case 4:
-			accounts = Account::findAccount(userid,keyWord, sortColumn, ascending);
-			displayString = "";
+			newAccount(user);
 			break;
 		case 5:
-			newAccount(user);
-		case 6:
 			modifyAccountPage(account,user);
 			break;
-		case 7:
-			return;
+		case 6:
+			UserPage(user);
 			break;
 		default:
 			break;
@@ -387,19 +387,20 @@ void AccountPage(Account account,User user)
 
 //convert amount to 2 decimal places
 string formatAmount(double amount) {
-	std::ostringstream formattedStream;
-	formattedStream << "RM " << std::fixed << std::setprecision(2) << amount; // Format with 2 decimal places
+	ostringstream formattedStream;
+	formattedStream << "RM " << fixed << setprecision(2) << amount; // Format with 2 decimal places
 	return formattedStream.str(); // Return the formatted string
 }
 
+//1)Add account
 void newAccount(User user) 
 {
 	Account addAccount;
 	Menu accountMenu;
 	accountMenu.header = "Add Account";
 	accountMenu.addOption("Account Name");
+	accountMenu.addOption("Balance ");
 	accountMenu.addOption("Budget Amount");
-	accountMenu.addOption("Balance ");;
 	accountMenu.addOption("Start Date");
 	accountMenu.addOption("End Date");
 	accountMenu.addOption("Confirm");
@@ -426,6 +427,16 @@ void newAccount(User user)
 			accountMenu.setValue(0, addAccount.account_name);
 			break;
 		case 2:
+			cout << "Enter account balance: RM ";
+			cin >> addAccount.balance;
+
+			// Format the balance amount using formatAmount function
+			formattedBalance = formatAmount(addAccount.balance);
+
+			// Set the formatted string to the menu value
+			accountMenu.setValue(1, formattedBalance);
+			break;
+		case 3:
 			cout << "Enter budget amount: RM ";
 			cin >> addAccount.budget_amount;
 
@@ -433,17 +444,7 @@ void newAccount(User user)
 			formattedBudget = formatAmount(addAccount.budget_amount);
 
 			// Set the formatted string to the menu value
-			accountMenu.setValue(1, formattedBudget);
-			break;
-		case 3:
-			cout << "Enter account balance: RM ";
-			cin >> addAccount.balance;
-			
-			// Format the balance amount using formatAmount function
-			formattedBalance = formatAmount(addAccount.balance);
-
-			// Set the formatted string to the menu value
-			accountMenu.setValue(2, formattedBalance);
+			accountMenu.setValue(2, formattedBudget);
 			break;
 		case 4:
 			cout << "Enter fisrt 3 letter abbreviation of month for set budget amount (Example: Jan,Feb): ";
@@ -509,8 +510,7 @@ void newAccount(User user)
 		case 6:
 			addAccount.UserID = user.UserId;
 			addAccount.addAccount();
-			cout << "Add sucessful !";
-			break;
+			cout << CYAN<<"Add sucessful !"<<RESET;
 		case 7:
 			//return account;//create account page
 			return;
@@ -521,6 +521,7 @@ void newAccount(User user)
 		
 	}
 }
+
 void modifyAccountPage(Account account, User user)
 {
 	vector <Account >Acc;
@@ -581,6 +582,7 @@ void modifyAccountPage(Account account, User user)
 Account modifyAccount(Account account)
 {
 	Account temp = account;
+	User user;
 
 	Menu modifyAccMenu;
 	modifyAccMenu.header = "Edit information of account / wallet";
@@ -603,10 +605,15 @@ Account modifyAccount(Account account)
 	localtime_s(&now, &current); //populate the now object with data from current
 
 	while(1)
-	{
+	{//check here,still have something wrong!
 		modifyAccMenu.setValue(0, temp.account_name);
+
+		formattedBalance = formatAmount(temp.balance);
 		modifyAccMenu.setValue(1, formattedBalance);
+
+		formattedBudget = formatAmount(temp.budget_amount);
 		modifyAccMenu.setValue(2, formattedBudget);
+
 		modifyAccMenu.setValue(3, temp.start_date);
 		modifyAccMenu.setValue(4, temp.end_date);
 		switch (modifyAccMenu.prompt())
@@ -618,12 +625,10 @@ Account modifyAccount(Account account)
 		case 2:
 			cout << "Enter new balance: ";
 			cin >> temp.balance;
-			formattedBalance = formatAmount(temp.balance);
 			break;
 		case 3:
 			cout << "Enter new budget amount: ";
 			cin >> temp.budget_amount;
-			formattedBudget = formatAmount(temp.budget_amount);
 			break;
 		case 4:
 			cout << "Enter fisrt 3 letter abbreviation of month for set budget amount (Example: Jan,Feb): ";
@@ -688,7 +693,7 @@ Account modifyAccount(Account account)
 			if (confirm == 'Y' || confirm == 'y') {
 				account = temp;
 				account.removeAccount();
-				main();
+				return account;
 			}
 			break;
 		default:
@@ -696,5 +701,4 @@ Account modifyAccount(Account account)
 		}
 	}
 }
-
 
