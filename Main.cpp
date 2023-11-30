@@ -20,9 +20,9 @@ User profile(User user);
 string formatAmount(double amount);//to correct into 2 d.p.
 
 void AccountPage(Account account, User user);
-//vector<Account> findAccount(string UserID, string account_name, double budget_amount, double balance, string start_date, string end_date);
 void newAccount(User user);//Add account
-//Account modifyAccount(Account account); //modify account
+void modifyAccountPage(Account account, User user);
+Account modifyAccount(Account account); //modify account
 
 int main()
 {
@@ -374,6 +374,9 @@ void AccountPage(Account account,User user)
 		case 5:
 			newAccount(user);
 		case 6:
+			modifyAccountPage(account,user);
+			break;
+		case 7:
 			return;
 			break;
 		default:
@@ -516,6 +519,182 @@ void newAccount(User user)
 			break;
 		}
 		
+	}
+}
+void modifyAccountPage(Account account, User user)
+{
+	vector <Account >Acc;
+	string disPlayAcc = "";
+	string userid = "";
+
+	Menu mdfAccPage;
+	mdfAccPage.header = "Your account / wallet";
+	mdfAccPage.addOption("Search account / wallet");
+	mdfAccPage.addOption("User Identity: ");
+	mdfAccPage.addOption("Account name: ");
+	mdfAccPage.addOption("Confirm");
+
+	while (1)
+	{
+		if (disPlayAcc == "") {
+			disPlayAcc = BLUE"\nSearch Result:\n" RESET;
+			stringstream tmpString;
+			tmpString << fixed << setprecision(2) << setw(5) << "Account Name" << "|" << endl;
+
+			for (int i = 0; i < Acc.size(); i++) {
+				tmpString << setw(10) << Acc[i].account_name << "|" << endl;
+			}
+			disPlayAcc += tmpString.str();
+		}
+		mdfAccPage.footer = disPlayAcc;
+		switch (mdfAccPage.prompt())
+		{
+		case 1:
+			userid = user.UserId;
+			Acc = Account::selectAccount(userid);
+			disPlayAcc = "";
+			break;
+		case 2:
+			cout << "UserID";
+			userid = user.UserId;
+			mdfAccPage.setValue(1, userid);
+		case 3:
+			cout << "Enter the account name to edit: ";
+			cin >> account.account_name;
+			mdfAccPage.setValue(2, account.account_name);
+			break;
+		case 4:
+			if (account.confirmtoEdit()) {
+				modifyAccount(account);
+			}
+			else {
+				cout << RED << "\tInvalid account !" << CYAN << " Please press enter to continues..." << RESET;
+				_getch();
+			}
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+//2)Modify account
+Account modifyAccount(Account account)
+{
+	Account temp = account;
+
+	Menu modifyAccMenu;
+	modifyAccMenu.header = "Edit information of account / wallet";
+	modifyAccMenu.addOption("Account name");
+	modifyAccMenu.addOption("Balance");
+	modifyAccMenu.addOption("Budget amount");
+	modifyAccMenu.addOption("Start date");
+	modifyAccMenu.addOption("End date");
+	modifyAccMenu.addOption("Reset");
+	modifyAccMenu.addOption("Save");
+	modifyAccMenu.addOption("Back");
+	modifyAccMenu.addOption("Delete Account");
+
+	string month;
+	string formattedBudget;
+	string formattedBalance;
+
+	time_t current = time(0); // get time in epoch seconds (since 1900)
+	tm now; // create a struct/object of tm to hold data
+	localtime_s(&now, &current); //populate the now object with data from current
+
+	while(1)
+	{
+		modifyAccMenu.setValue(0, temp.account_name);
+		modifyAccMenu.setValue(1, formattedBalance);
+		modifyAccMenu.setValue(2, formattedBudget);
+		modifyAccMenu.setValue(3, temp.start_date);
+		modifyAccMenu.setValue(4, temp.end_date);
+		switch (modifyAccMenu.prompt())
+		{
+		case 1:
+			cout << "Enter new account name: ";
+			cin >> temp.account_name;
+			break;
+		case 2:
+			cout << "Enter new balance: ";
+			cin >> temp.balance;
+			formattedBalance = formatAmount(temp.balance);
+			break;
+		case 3:
+			cout << "Enter new budget amount: ";
+			cin >> temp.budget_amount;
+			formattedBudget = formatAmount(temp.budget_amount);
+			break;
+		case 4:
+			cout << "Enter fisrt 3 letter abbreviation of month for set budget amount (Example: Jan,Feb): ";
+			cin >> month;
+			if (month == "Jan" || month == "Mar" || month == "May" || month == "Jul" || month == "Aug" || month == "Oct" || month == "Dec")
+			{
+				temp.start_date = "01-" + month + "-" + to_string(now.tm_year + 1900);
+				temp.end_date = "31-" + month + "-" + to_string(now.tm_year + 1900);
+			}
+			else if (month == "Apr" || month == "Jun" || month == "Sep" || month == "Nov")
+			{
+				temp.start_date = "01-" + month + "-" + to_string(now.tm_year + 1900);
+				temp.end_date = "30-" + month + "-" + to_string(now.tm_year + 1900);
+			}
+			else if (month == "Feb")
+			{
+				if ((now.tm_year + 1900) % 400 == 0)
+				{
+					temp.start_date = "01-" + month + "-" + to_string(now.tm_year + 1900);
+					temp.end_date = "29-" + month + "-" + to_string(now.tm_year + 1900);
+				}
+				else if ((now.tm_year + 1900) % 100 == 0)
+				{
+					temp.start_date = "01-" + month + "-" + to_string(now.tm_year + 1900);
+					temp.end_date = "28-" + month + "-" + to_string(now.tm_year + 1900);
+				}
+				else if ((now.tm_year + 1900) % 4 == 0)
+				{
+					temp.start_date = "01-" + month + "-" + to_string(now.tm_year + 1900);
+					temp.end_date = "29-" + month + "-" + to_string(now.tm_year + 1900);
+				}
+				else
+				{
+					temp.start_date = "01-" + month + "-" + to_string(now.tm_year + 1900);
+					temp.end_date = "28-" + month + "-" + to_string(now.tm_year + 1900);
+				}
+			}
+			else
+			{
+				cout <<RED<< "Invlaid input"<<RESET;
+			}
+			break;
+		case 5:
+			break;
+		case 6:
+			break;
+		case 7:
+			temp = account;
+			break;
+		case 8:
+			account = temp;
+			account.update();
+			cout << CYAN<<"Updated"<<RESET;
+			_getch();
+		case 9:
+			return account;
+			break;
+		case 10:
+			cout <<RED<< "Delete your account? [Y/N]"<<RESET;
+			char confirm;
+			confirm = _getch();
+			if (confirm == 'Y' || confirm == 'y') {
+				account = temp;
+				account.removeAccount();
+				main();
+			}
+			break;
+		default:
+			break;
+		}
 	}
 }
 
