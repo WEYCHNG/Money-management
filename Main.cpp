@@ -603,7 +603,7 @@ Account modifyAccount(Account account)
 	localtime_s(&now, &current); //populate the now object with data from current
 
 	while(1)
-	{//check here,still have something wrong!
+	{
 		modifyAccMenu.setValue(0, temp.account_name);
 		modifyAccMenu.setValue(1, formattedBalance);
 		modifyAccMenu.setValue(2, formattedBudget);
