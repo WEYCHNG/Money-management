@@ -31,12 +31,13 @@ void Account::addAccount() {
 void Account::update() {
 
 	DBConnection db;
-	db.prepareStatement("UPDATE account SETaccount_name=?, budget_amount=?,balance=?, start_date=?, end_date=? WHERE AccountID=?");
+	db.prepareStatement("UPDATE account SETaccount_name=?, budget_amount=?,balance=?, start_date=?, end_date=? WHERE UserID=?");
 	db.stmt->setString(1, account_name);
 	db.stmt->setDouble(2, budget_amount);
 	db.stmt->setDouble(3, balance);
 	db.stmt->setString(4, start_date);
 	db.stmt->setString(5, end_date);
+	db.stmt->setString(5, UserID);
 	db.QueryStatement();
 	db.~DBConnection();
 
