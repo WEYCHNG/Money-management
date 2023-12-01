@@ -53,7 +53,7 @@ void Account::removeAccount() {
 }
 
 Account::Account(sql::ResultSet* data)
-{
+{//take from data base
 	//AccountID = data->getInt("AccountID");
 	//UserID = data->getString("UserID");
 	account_name = data->getString("account_name");
@@ -125,13 +125,14 @@ vector<Account> Account::selectAccount(string userid) {
 bool Account::confirmtoEdit() {
 
 	DBConnection db;
-	db.prepareStatement("SELECT account_name,budget_amount,balance,start_date,end_date FROM account WHERE account_name=? ");
-	//db.stmt->setString(1, UserID);
-	db.stmt->setString(1, account_name);
+	db.prepareStatement("SELECT account_name,budget_amount,balance,start_date,end_date FROM account WHERE UserID=? AND account_name");
+	db.stmt->setString(1, UserID);
+	db.stmt->setString(2, account_name);
 	db.QueryResult();
 	if (db.res->rowsCount() == 1)
 	{
 		while (db.res->next()) {
+			UserID = db.res->getString("UserID");
 			account_name = db.res->getString("account_name");
 			balance = db.res->getDouble("balance");
 			budget_amount = db.res->getDouble("budget_amount");
