@@ -27,16 +27,16 @@ User profile(User user);
 
 string formatAmount(double amount);//to correct into 2 d.p.
 
-void AccountPage(Account account, User user);
-void newAccount(User user);//Add account
-void modifyAccountPage(Account account, User user);//select accout to modify
-Account modifyAccount(Account account); //modify account
+void AccountPage(string UserId);
+void newAccount(string UserId);//Add account
+void modifyAccountPage(string UserID,string account_name);//select accout to modify
+void modifyAccount(Account account); //only need userid and accountname
 
 int main()
 {
 
 	Menu LoginPage;
-	LoginPage.header = "Welcome to money world !!!";
+	LoginPage.header = "Welcome to money manager !!!";
 	LoginPage.addOption("Register");
 	LoginPage.addOption("Login");
 	LoginPage.addOption("Exit");
@@ -73,29 +73,29 @@ void registerAccount() {
 	cnMenu.addOption("Email");
 	cnMenu.addOption("Phone Number (01X-XXXXXXX)");
 	cnMenu.addOption("Confirm");
-	cnMenu.addOption("Back");
+	cnMenu.addOption("Back to login page");
 
 	string tmpinput;
 	while (1) {
 
 		switch (cnMenu.prompt()) {
 		case 1:
-			cout << "Insert UserId: ";
+			cout << "Enter UserId: ";
 			cin >> newacc.UserId;
 			cnMenu.setValue(0, newacc.UserId);
 			break;
 		case 2:
-			cout << "Insert First Name: ";
+			cout << "Enter First Name: ";
 			cin >> newacc.first_name;
 			cnMenu.setValue(1, newacc.first_name);
 			break;
 		case 3:
-			cout << "Insert Last Name: ";
+			cout << "Enter Last Name: ";
 			cin >> newacc.last_name;
 			cnMenu.setValue(2, newacc.last_name);
 			break;
 		case 4:
-			cout << "Insert password: ";
+			cout << "Enter password: ";
 			cin >> tmpinput;
 			if (tmpinput.length() < 6) {
 				cout << "Password must be at least 6 character long";
@@ -107,12 +107,12 @@ void registerAccount() {
 			}
 			break;
 		case 5:
-			cout << "Insert email: ";
+			cout << "Enter email: ";
 			cin >> newacc.email;
 			cnMenu.setValue(4, newacc.email);
 			break;
 		case 6:
-			cout << "Insert Phone Number: ";
+			cout << "Enter Phone Number: ";
 			cin >> tmpinput;
 			if (tmpinput.length() < 9)
 			{
@@ -155,12 +155,12 @@ void loginMenu()
 		switch (loginMenu.prompt())
 		{
 		case 1:
-			cout << "Insert UserId: ";
+			cout << "Enter UserId: ";
 			cin >> user.UserId;
 			loginMenu.setValue(0, user.UserId);
 			break;
 		case 2:
-			cout << "Insert Password: ";
+			cout << "Enter Password: ";
 			cin >> user.password;
 			loginMenu.setValue(1, user.password);
 			break;
@@ -185,7 +185,6 @@ void loginMenu()
 //USER PAGE
 void UserPage(User user) 
 {
-	Account account;
 	Menu homeMenu;
 	homeMenu.addOption("Profile");
 	homeMenu.addOption("Account");
@@ -201,7 +200,7 @@ void UserPage(User user)
 			user = profile(user);
 			break;
 		case 2:
-			AccountPage(account,user);
+			AccountPage(user.UserId);
 			break;
 		case 3:
 			//Transaction
@@ -295,8 +294,9 @@ User profile(User user) {
 }
 
 //ACCOUNT PAGE
-void AccountPage(Account account,User user)
+void AccountPage(string UserId)
 {
+	Account account;
 	vector<Account> accounts;
 	string displayString = "";
 	string sortColumn = "account_name";
@@ -348,8 +348,7 @@ void AccountPage(Account account,User user)
 		switch (homeAccount.prompt())
 		{
 		case 1:
-			userid = user.UserId;
-			accounts = Account::findAccount(userid, sortColumn, ascending);
+			accounts = Account::findAccount(UserId, sortColumn, ascending);
 			displayString = "";
 			break;
 		case 2:
@@ -371,13 +370,13 @@ void AccountPage(Account account,User user)
 			ascending = !ascending;
 			break;
 		case 4:
-			newAccount(user);
+			newAccount(UserId);
 			break;
 		case 5:
-			modifyAccountPage(account,user);
+			modifyAccountPage(UserId, account.account_name);
 			break;
 		case 6:
-			UserPage(user);
+			//UserPage(user);
 			break;
 		default:
 			break;
@@ -393,7 +392,7 @@ string formatAmount(double amount) {
 }
 
 //1)Add account
-void newAccount(User user) 
+void newAccount(string UserId) 
 {
 	Account addAccount;
 	Menu accountMenu;
@@ -508,7 +507,7 @@ void newAccount(User user)
 		case 5:
 			break;
 		case 6:
-			addAccount.UserID = user.UserId;
+			addAccount.UserID = UserId;
 			addAccount.addAccount();
 			cout << CYAN<<"Add sucessful !"<<RESET;
 		case 7:
@@ -522,12 +521,15 @@ void newAccount(User user)
 	}
 }
 
-void modifyAccountPage(Account account, User user)
+void modifyAccountPage(string UserId,string account_name)
 {
 	vector <Account >Acc;
 	string disPlayAcc = "";
 	string userid = "";
 
+	User user;
+	Account account;
+	
 	Menu mdfAccPage;
 	mdfAccPage.header = "Your account / wallet";
 	mdfAccPage.addOption("Search account / wallet");
@@ -548,19 +550,21 @@ void modifyAccountPage(Account account, User user)
 			disPlayAcc += tmpString.str();
 		}
 		mdfAccPage.footer = disPlayAcc;
+		
 		switch (mdfAccPage.prompt())
 		{
 		case 1:
-			userid = user.UserId;
-			Acc = Account::selectAccount(userid);
+			Acc = Account::selectAccount(UserId);
 			disPlayAcc = "";
 			break;
 		case 2:
 			cout << "Enter the account name to edit: ";
-			cin >> account.account_name;
-			mdfAccPage.setValue(1, account.account_name);
+			cin >>account.account_name;
+			mdfAccPage.setValue(1,account.account_name);
+
 			break;
 		case 3:
+			
 			if (account.confirmtoEdit()) {
 				modifyAccount(account);
 			}
@@ -579,10 +583,9 @@ void modifyAccountPage(Account account, User user)
 }
 
 //2)Modify account
-Account modifyAccount(Account account)
-{
+void modifyAccount(Account account)
+{ 
 	Account temp = account;
-	User user;
 
 	Menu modifyAccMenu;
 	modifyAccMenu.header = "Edit information of account / wallet";
@@ -684,7 +687,7 @@ Account modifyAccount(Account account)
 			_getch();
 			break;
 		case 8:
-			return account;
+			return ;
 			break;
 		case 9:
 			cout << RED << "Delete your account? [Y/N]" << RESET;
@@ -693,7 +696,7 @@ Account modifyAccount(Account account)
 			if (confirm == 'Y' || confirm == 'y') {
 				account = temp;
 				account.removeAccount();
-				return account;
+				return ;
 			}
 			break;
 		default:
@@ -701,4 +704,3 @@ Account modifyAccount(Account account)
 		}
 	}
 }
-
