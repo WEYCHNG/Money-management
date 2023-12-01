@@ -17,7 +17,7 @@ void Account::addAccount() {
 	DBConnection db;
 	
 	db.prepareStatement("Insert into account (UserID,account_name,budget_amount,balance,start_date,end_date) VALUES (?,?,?,?,?,?)");
-	db.stmt->setString(1, UserID);//if your insert 
+	db.stmt->setString(1, UserID);
 	db.stmt->setString(2, account_name);
 	db.stmt->setDouble(3, budget_amount);
 	db.stmt->setDouble(4, balance);
@@ -31,13 +31,13 @@ void Account::addAccount() {
 void Account::update() {
 
 	DBConnection db;
-	db.prepareStatement("UPDATE account SET account_name=?, budget_amount=?,balance=?, start_date=?, end_date=? WHERE UserID=?");
-	db.stmt->setString(1, account_name);
-	db.stmt->setDouble(2, budget_amount);
-	db.stmt->setDouble(3, balance);
-	db.stmt->setString(4, start_date);
-	db.stmt->setString(5, end_date);
-	db.stmt->setString(6, UserID);
+	db.prepareStatement("UPDATE account SET budget_amount=?,balance=?, start_date=?, end_date=? WHERE UserID=? AND account_name=?");
+	db.stmt->setDouble(1, budget_amount);
+	db.stmt->setDouble(2, balance);
+	db.stmt->setString(3, start_date);
+	db.stmt->setString(4, end_date);
+	db.stmt->setString(5, UserID);
+	db.stmt->setString(6, account_name);
 	db.QueryStatement();
 	db.~DBConnection();
 
@@ -112,8 +112,8 @@ vector<Account> Account::selectAccount(string userid) {
 	if (db.res->rowsCount() > 0) {
 
 		while (db.res->next()) {
-			Account tmpProduct(db.res);
-			Acc.push_back(tmpProduct);
+			Account tmpAccount(db.res);
+			Acc.push_back(tmpAccount);
 		}
 	}
 
@@ -121,18 +121,41 @@ vector<Account> Account::selectAccount(string userid) {
 	return Acc;
 }
 
-
-bool Account::confirmtoEdit() {
-
+double Account::totalAmount()
+{
 	DBConnection db;
-	db.prepareStatement("SELECT account_name,budget_amount,balance,start_date,end_date FROM account WHERE UserID=? AND account_name");
+	db.prepareStatement("SELECT SUM(balance) as balance FROM account WHERE UserID=? ");
+	db.stmt->setString(1, UserID);
+	db.QueryResult();
+	if (db.res->rowsCount() == 1)
+	{
+		while (db.res->next()) {
+			balance = db.res->getDouble("balance");
+		
+		}
+
+		db.~DBConnection();
+		return true;
+	}
+	else {
+
+		db.~DBConnection();
+		return false;
+	}
+	
+}
+
+
+bool Account::confirmtoEdit()
+{
+	DBConnection db;
+	db.prepareStatement("SELECT account_name,budget_amount,balance,start_date,end_date FROM account WHERE UserID=? AND account_name=?");
 	db.stmt->setString(1, UserID);
 	db.stmt->setString(2, account_name);
 	db.QueryResult();
 	if (db.res->rowsCount() == 1)
 	{
 		while (db.res->next()) {
-			UserID = db.res->getString("UserID");
 			account_name = db.res->getString("account_name");
 			balance = db.res->getDouble("balance");
 			budget_amount = db.res->getDouble("budget_amount");
