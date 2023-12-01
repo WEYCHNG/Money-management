@@ -185,6 +185,9 @@ void loginMenu()
 //USER PAGE
 void UserPage(User user) 
 {
+	Account account;
+	account.UserID = user.UserId;
+
 	Menu homeMenu;
 	homeMenu.addOption("Profile");
 	homeMenu.addOption("Account");
@@ -193,7 +196,11 @@ void UserPage(User user)
 	homeMenu.addOption("Logout");
 	while (1)
 	{
+		
+
 		homeMenu.header = "Welcome " + user.UserId;
+
+		homeMenu.footer = "Total amount: " + to_string(account.totalAmount());
 		switch (homeMenu.prompt())
 		{
 		case 1:
@@ -529,6 +536,7 @@ void modifyAccountPage(string UserId,string account_name)
 
 	User user;
 	Account account;
+	account.UserID = UserId;
 	
 	Menu mdfAccPage;
 	mdfAccPage.header = "Your account / wallet";
@@ -564,7 +572,6 @@ void modifyAccountPage(string UserId,string account_name)
 
 			break;
 		case 3:
-			
 			if (account.confirmtoEdit()) {
 				modifyAccount(account);
 			}
@@ -581,6 +588,7 @@ void modifyAccountPage(string UserId,string account_name)
 		}
 	}
 }
+
 
 //2)Modify account
 void modifyAccount(Account account)
@@ -681,7 +689,7 @@ void modifyAccount(Account account)
 			break;
 		case 7:
 			account = temp;
-			
+			//update part have some problem, need to research
 			account.update();
 			cout << CYAN << "Updated" << RESET;
 			_getch();
@@ -704,3 +712,4 @@ void modifyAccount(Account account)
 		}
 	}
 }
+
