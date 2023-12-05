@@ -32,6 +32,10 @@ void newAccount(string UserId);//Add account
 void modifyAccountPage(string UserID,string account_name);//select accout to modify
 void modifyAccount(Account account); //only need userid and accountname
 
+void TransactionPage(string AccountID);
+void newTrans(string AccountID);
+
+
 int main()
 {
 
@@ -712,4 +716,137 @@ void modifyAccount(Account account)
 		}
 	}
 }
+
+//TRANSACTION PAGE
+void TransactionPage(string AccountID)
+{
+	Account account;
+	Transaction trans;
+
+	trans.AccountID = account.AccountID;
+	AccountID = trans.AccountID;
+
+	Menu transPage;
+	transPage.header = "Transaction Page";
+	transPage.addOption("Create transaction");//Add transaction depend UserID 
+	transPage.addOption("Edit transaction");//edit sorting depend the Transaction ID and UserID !! (Don't know how to get Transaction ID from transaction table)
+	transPage.addOption("Transaction History");//sorting option in here !!(depent type and date)
+	transPage.addOption("Back to UserPage");
+
+	while (1)
+	{
+		switch (transPage.prompt())
+		{
+		case 1:
+			newTrans(AccountID);
+			break;
+		case 2:
+			//Edit transaction
+			break;
+		case 3:
+			//Serach transaction
+			break;
+		case 4:
+			return;
+			break;
+		default:
+			break;
+
+		}
+
+	}
+}
+
+void newTrans(string AccountID)
+{
+	Transaction addTrans;
+	Account account;
+	Menu homeTrans;
+	homeTrans.addOption("Type of transaction: ");//1
+	homeTrans.addOption("Amount of transaction: ");//2
+	homeTrans.addOption("Category: ");//3
+	homeTrans.addOption("Description: ");//4
+	homeTrans.addOption("Transaction date:");//5
+	homeTrans.addOption("New balance: ");//6
+	homeTrans.addOption("Confirm");//6
+	homeTrans.addOption("Back to transaction page ");
+
+	string formattedTransAmount;
+	string formattednewBalance;
+
+
+	while (1)
+	{
+		homeTrans.header = "Add Transaction";
+		switch (homeTrans.prompt())
+		{
+		case 1:
+			cout << "Select Deposit or Expenses: ";
+			cin >> addTrans.transaction_type;
+			if (addTrans.transaction_type == "Deposit" || addTrans.transaction_type == "Expenses")
+			{
+				homeTrans.setValue(0, addTrans.transaction_type);
+			}
+			else
+			{
+				cout << "Invalid input, please select again !";
+			}
+			break;
+		case 2:
+			cout << "Enter amount: RM";
+			cin >> addTrans.transaction_amount;
+			formattedTransAmount = formatAmount(addTrans.transaction_amount);
+			homeTrans.setValue(1, formattedTransAmount);
+			break;
+		case 3:
+			cout << "Enter category (Example: Food & Beverage, Transportation, Bills): ";
+			cin >> addTrans.description;
+			homeTrans.setValue(2, addTrans.description);
+			break;
+		case 4:
+			cout << "Description: ";
+			if (addTrans.transaction_type == "Expenses")
+			{
+				cin >> addTrans.description;
+				homeTrans.setValue(3, addTrans.description);
+			}
+			else
+			{
+				addTrans.description = "NULL";
+				homeTrans.setValue(3, addTrans.description);
+			}
+		case 5:
+			//cout << "Transaction date: ";
+			//homeTrans.setValue(3, addTrans.description);
+			break;
+		case 6:
+			//has some problem
+			if (account.AccountID == addTrans.AccountID)
+			{
+				if (addTrans.transaction_type == "Deposit")
+				{
+					addTrans.newbalance = account.balance + addTrans.transaction_amount;
+					formattednewBalance = formatAmount(addTrans.newbalance);
+					homeTrans.setValue(5, formattednewBalance);
+				}
+				else if (addTrans.transaction_type == "Expenses")
+				{
+					addTrans.newbalance = account.balance - addTrans.transaction_amount;
+					formattednewBalance = formatAmount(addTrans.newbalance);
+					homeTrans.setValue(5, formattednewBalance);
+				}
+			}
+		case 7:
+			addTrans.addTrans();
+			break;
+		case 8:
+			return;
+			break;
+		default:
+			break;
+
+		}
+	}
+}
+
 
