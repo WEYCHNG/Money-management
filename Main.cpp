@@ -32,8 +32,8 @@ void newAccount(string UserId);//Add account
 void modifyAccountPage(string UserID,string account_name);//select accout to modify
 void modifyAccount(Account account); //only need userid and accountname
 
-void TransactionPage(string AccountID);
-void newTrans(string AccountID);
+void TransactionPage(int AccountID);
+void newTrans(int AccountID);
 
 
 int main()
@@ -718,7 +718,7 @@ void modifyAccount(Account account)
 }
 
 //TRANSACTION PAGE
-void TransactionPage(string AccountID)
+void TransactionPage(int AccountID)
 {
 	Account account;
 	Transaction trans;
@@ -757,7 +757,7 @@ void TransactionPage(string AccountID)
 	}
 }
 
-void newTrans(string AccountID)
+void newTrans(int AccountID)
 {
 	Transaction addTrans;
 	Account account;
