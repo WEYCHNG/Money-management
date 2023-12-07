@@ -33,7 +33,7 @@ void modifyAccountPage(string UserID,string account_name);//select accout to mod
 void modifyAccount(Account account); //only need userid and accountname
 
 void TransactionPage(int AccountID);
-void newTrans(int AccountID);
+void newTrans(int AccountID, string UserId, string account_name);
 
 
 int main()
@@ -757,69 +757,101 @@ void TransactionPage(int AccountID)
 	}
 }
 
-void newTrans(int AccountID)
+void newTrans(int AccountID, string UserId, string account_name)
 {
-	Transaction addTrans;
+	vector <Account> Acc;
+	string disPlayAcc = "";
+	string userid = "";
+
+	User user;
 	Account account;
+	account.UserID = UserId;
+
+	Transaction addTrans;
+	bool Expenses = true;
+
 	Menu homeTrans;
-	homeTrans.addOption("Type of transaction: ");//1
-	homeTrans.addOption("Amount of transaction: ");//2
-	homeTrans.addOption("Category: ");//3
-	homeTrans.addOption("Description: ");//4
-	homeTrans.addOption("Transaction date:");//5
-	homeTrans.addOption("New balance: ");//6
-	homeTrans.addOption("Confirm");//6
-	homeTrans.addOption("Back to transaction page ");
+	homeTrans.addOption("Search account / wallet");//1
+	homeTrans.addOption("Account name: ");//2
+	homeTrans.addOption("Type of transaction: ");//3
+	homeTrans.addOption("Amount of transaction: ");//4
+	homeTrans.addOption("Category: ");//5
+	homeTrans.addOption("Description: ");//6
+	homeTrans.addOption("New balance: ");//7
+	homeTrans.addOption("Confirm");//8
+	homeTrans.addOption("Back to transaction page ");//9
 
 	string formattedTransAmount;
 	string formattednewBalance;
-
+	string transType;
 
 	while (1)
 	{
+		if (disPlayAcc == "") {
+			disPlayAcc = BLUE"\nAccount / Wallet:\n" RESET;
+			stringstream tmpString;
+			tmpString << fixed << setprecision(2) << setw(5) << "Account Name" << "|" << endl;
+
+			for (int i = 0; i < Acc.size(); i++) {
+				tmpString << setw(10) << Acc[i].account_name << "|" << endl;
+			}
+			disPlayAcc += tmpString.str();
+		}
+		homeTrans.footer = disPlayAcc;
+
+		if (Expenses) {
+			homeTrans.setValue(0, "Expenses");
+		}
+		else {
+			homeTrans.setValue(0, "Deposit");
+		}
+
 		homeTrans.header = "Add Transaction";
 		switch (homeTrans.prompt())
 		{
 		case 1:
-			cout << "Select Deposit or Expenses: ";
-			cin >> addTrans.transaction_type;
-			if (addTrans.transaction_type == "Deposit" || addTrans.transaction_type == "Expenses")
-			{
-				homeTrans.setValue(0, addTrans.transaction_type);
-			}
-			else
-			{
-				cout << "Invalid input, please select again !";
-			}
+			Acc = Account::toFindAccount(UserId);
+			disPlayAcc = "";
 			break;
 		case 2:
+			cout << "Select account: ";
+			cin >> account.account_name;
+			homeTrans.setValue(1, account.account_name);
+		case 3:
+			cout << "Select Deposit or Expenses: ";
+			Expenses = !Expenses;
+			if (transType == "Expenses") {
+				transType = "Deposit";
+			}
+			else {
+				transType = "Expenses";
+			}
+			addTrans.transaction_type = transType;
+			homeTrans.setValue(2, addTrans.transaction_type);
+		case 4:
 			cout << "Enter amount: RM";
 			cin >> addTrans.transaction_amount;
 			formattedTransAmount = formatAmount(addTrans.transaction_amount);
-			homeTrans.setValue(1, formattedTransAmount);
+			homeTrans.setValue(3, formattedTransAmount);
 			break;
-		case 3:
+		case 5:
 			cout << "Enter category (Example: Food & Beverage, Transportation, Bills): ";
 			cin >> addTrans.description;
-			homeTrans.setValue(2, addTrans.description);
+			homeTrans.setValue(4, addTrans.description);
 			break;
-		case 4:
+		case 6:
 			cout << "Description: ";
 			if (addTrans.transaction_type == "Expenses")
 			{
 				cin >> addTrans.description;
-				homeTrans.setValue(3, addTrans.description);
+				homeTrans.setValue(5, addTrans.description);
 			}
 			else
 			{
 				addTrans.description = "NULL";
-				homeTrans.setValue(3, addTrans.description);
+				homeTrans.setValue(5, addTrans.description);
 			}
-		case 5:
-			//cout << "Transaction date: ";
-			//homeTrans.setValue(3, addTrans.description);
-			break;
-		case 6:
+		case 7:
 			//has some problem
 			if (account.AccountID == addTrans.AccountID)
 			{
@@ -836,11 +868,12 @@ void newTrans(int AccountID)
 					homeTrans.setValue(5, formattednewBalance);
 				}
 			}
-		case 7:
-			addTrans.addTrans();
 			break;
 		case 8:
+			addTrans.addTrans();
+		case 9:
 			return;
+			break;
 			break;
 		default:
 			break;
